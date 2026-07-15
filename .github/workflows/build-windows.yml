@@ -1,0 +1,40 @@
+name: Build Windows
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build lcms2 for Windows x86_64
+        shell: pwsh
+        run: |
+          mkdir build-windows
+          cd build-windows
+          cmake .. `
+            -DLCMS2_BUILD_SHARED=OFF `
+            -DLCMS2_BUILD_STATIC=ON `
+            -DLCMS2_BUILD_TOOLS=OFF `
+            -DLCMS2_BUILD_TESTS=OFF `
+            -DCMAKE_BUILD_TYPE=Release
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          cmake --build . --config Release -j
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: lcms2-windows-x86_64
+          path: build-windows/Release/lcms2.lib
+
+      - name: Upload to Release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: build-windows/Release/lcms2.lib

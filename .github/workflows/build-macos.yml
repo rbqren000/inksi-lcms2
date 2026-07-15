@@ -1,0 +1,69 @@
+name: Build macOS
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-latest
+    permissions:
+      contents: write
+    strategy:
+      matrix:
+        arch: [arm64, x86_64]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build liblcms2 for macOS ${{ matrix.arch }}
+        run: |
+          mkdir build-macos-${{ matrix.arch }} && cd build-macos-${{ matrix.arch }}
+          cmake .. \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_OSX_ARCHITECTURES=${{ matrix.arch }} \
+            -DLCMS2_BUILD_SHARED=OFF \
+            -DLCMS2_BUILD_STATIC=ON \
+            -DLCMS2_BUILD_TOOLS=OFF \
+            -DLCMS2_BUILD_TESTS=OFF
+          cmake --build . -j$(sysctl -n hw.ncpu)
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: lcms2-macos-${{ matrix.arch }}
+          path: build-macos-${{ matrix.arch }}/liblcms2.a
+
+  universal:
+    needs: build
+    runs-on: macos-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: lcms2-macos-arm64
+          path: artifacts/arm64
+      - uses: actions/download-artifact@v4
+        with:
+          name: lcms2-macos-x86_64
+          path: artifacts/x86_64
+
+      - name: Create universal static library
+        run: |
+          lipo -create \
+            artifacts/arm64/liblcms2.a \
+            artifacts/x86_64/liblcms2.a \
+            -output liblcms2.a
+          echo "Architectures: $(lipo -info liblcms2.a)"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: lcms2-macos-universal
+          path: liblcms2.a
+
+      - name: Upload to Release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: liblcms2.a

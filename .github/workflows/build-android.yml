@@ -1,0 +1,44 @@
+name: Build Android
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: nttld/setup-ndk@v1
+        with:
+          ndk-version: r27
+
+      - name: Build liblcms2 for Android arm64-v8a
+        run: |
+          mkdir build-android && cd build-android
+          cmake .. \
+            -DCMAKE_TOOLCHAIN_FILE="$ANDROID_NDK_HOME/build/cmake/android.toolchain.cmake" \
+            -DANDROID_ABI=arm64-v8a \
+            -DANDROID_PLATFORM=android-21 \
+            -DLCMS2_BUILD_SHARED=OFF \
+            -DLCMS2_BUILD_STATIC=ON \
+            -DLCMS2_BUILD_TOOLS=OFF \
+            -DLCMS2_BUILD_TESTS=OFF \
+            -DCMAKE_BUILD_TYPE=Release
+          cmake --build . -j$(nproc)
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: lcms2-android-arm64-v8a
+          path: build-android/liblcms2.a
+
+      - name: Upload to Release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: build-android/liblcms2.a

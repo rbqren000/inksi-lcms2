@@ -1,0 +1,37 @@
+name: Build Linux
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build liblcms2 for Linux x86_64
+        run: |
+          mkdir build-linux && cd build-linux
+          cmake .. \
+            -DLCMS2_BUILD_SHARED=OFF \
+            -DLCMS2_BUILD_STATIC=ON \
+            -DLCMS2_BUILD_TOOLS=OFF \
+            -DLCMS2_BUILD_TESTS=OFF \
+            -DCMAKE_BUILD_TYPE=Release
+          cmake --build . -j$(nproc)
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: lcms2-linux-x86_64
+          path: build-linux/liblcms2.a
+
+      - name: Upload to Release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: build-linux/liblcms2.a
