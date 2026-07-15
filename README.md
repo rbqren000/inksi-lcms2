@@ -6,19 +6,44 @@
 
 Prebuilt static libraries for:
 
-| Platform | Arch       | Output         |
-|----------|------------|----------------|
-| Android  | arm64-v8a  | `liblcms2.a`   |
-| iOS      | arm64      | `liblcms2.a`   |
-| macOS    | universal  | `liblcms2.a`   |
-| Windows  | x86_64     | `lcms2.lib`    |
-| Linux    | x86_64     | `liblcms2.a`   |
+| Platform | Arch       | Release artifact                |
+|----------|------------|---------------------------------|
+| Android  | arm64-v8a  | `lcms2-android-arm64-v8a.a`     |
+| iOS      | arm64      | `lcms2-ios-arm64.a`             |
+| macOS    | universal  | `lcms2-macos-universal.a`       |
+| Windows  | x86_64     | `lcms2-windows-x86_64.lib`      |
+| Linux    | x86_64     | `lcms2-linux-x86_64.a`          |
+| OHOS     | arm64-v8a  | `lcms2-ohos-arm64-v8a.a`        |
 
 ## Build
 
-All platforms are compiled via GitHub Actions. See `.github/workflows/`.
+### GitHub Actions (CI)
 
-### Local build (any platform)
+Tag a `v*` release to trigger all 5 platform builds automatically.
+
+### Local build
+
+```bash
+# Android
+./scripts/build-android.sh
+
+# iOS
+./scripts/build-ios.sh
+
+# macOS (native arch)
+./scripts/build-macos.sh
+
+# Linux
+./scripts/build-linux.sh
+
+# Windows
+scripts\build-windows.bat
+
+# OHOS (requires DevEco Studio)
+./scripts/build-ohos.sh
+```
+
+Or manually:
 
 ```bash
 mkdir build && cd build
