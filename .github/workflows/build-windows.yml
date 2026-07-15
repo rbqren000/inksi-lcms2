@@ -33,8 +33,13 @@ jobs:
           name: lcms2-windows-x86_64
           path: build-windows/Release/lcms2.lib
 
+      - name: Rename for Release
+        if: startsWith(github.ref, 'refs/tags/')
+        shell: pwsh
+        run: Copy-Item build-windows/Release/lcms2.lib lcms2-windows-x86_64.lib
+
       - name: Upload to Release
         if: startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v2
         with:
-          files: build-windows/Release/lcms2.lib
+          files: lcms2-windows-x86_64.lib

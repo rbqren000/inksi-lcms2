@@ -54,16 +54,16 @@ jobs:
           lipo -create \
             artifacts/arm64/liblcms2.a \
             artifacts/x86_64/liblcms2.a \
-            -output liblcms2.a
-          echo "Architectures: $(lipo -info liblcms2.a)"
+            -output lcms2-macos-universal.a
+          echo "Architectures: $(lipo -info lcms2-macos-universal.a)"
 
       - uses: actions/upload-artifact@v4
         with:
           name: lcms2-macos-universal
-          path: liblcms2.a
+          path: lcms2-macos-universal.a
 
       - name: Upload to Release
         if: startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v2
         with:
-          files: liblcms2.a
+          files: lcms2-macos-universal.a

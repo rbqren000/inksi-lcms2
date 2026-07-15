@@ -30,8 +30,12 @@ jobs:
           name: lcms2-linux-x86_64
           path: build-linux/liblcms2.a
 
+      - name: Rename for Release
+        if: startsWith(github.ref, 'refs/tags/')
+        run: cp build-linux/liblcms2.a lcms2-linux-x86_64.a
+
       - name: Upload to Release
         if: startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v2
         with:
-          files: build-linux/liblcms2.a
+          files: lcms2-linux-x86_64.a
