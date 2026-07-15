@@ -1,0 +1,70 @@
+# Build outputs
+build/
+build-*/
+out/
+install/
+
+# Library files (produced by build)
+*.o
+*.obj
+*.a
+*.lib
+*.so
+*.so.*
+*.dylib
+*.dll
+*.exp
+*.pdb
+*.ilk
+
+# Autotools artifacts
+.autotools
+*.Plo
+*.la
+*.lai
+*.lo
+*.Po
+*.pc
+/config.status
+.libs
+libtool
+
+# IDE
+.vs/
+.idea/
+*.user
+*.aps
+*.suo
+*.ncb
+*.sbr
+*.tlog
+*.ipdb
+*.iobj
+*.recipe
+*.idb
+[Bb]in/
+[Dd]ebug*/
+[Rr]elease*/
+obj/
+_ReSharper*/
+
+# Xcode
+Build/
+DerivedData
+*.xcworkspace
+xcuserdata/
+
+# Eclipse
+.cproject
+.project
+.settings
+
+# macOS
+.DS_Store
+Thumbs.db
+
+# Misc
+*.bak
+*.cache
+*.log
+*.lastcodeanalysissucceeded
