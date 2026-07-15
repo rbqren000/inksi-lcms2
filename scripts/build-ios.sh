@@ -3,7 +3,7 @@ set -euo pipefail
 
 # ============================================================
 # iOS 编译脚本（仅 macOS）
-# 产物: liblcms2-ios-arm64.a
+# 产物: lcms2-ios-arm64.a
 # ============================================================
 SCRIPT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 
@@ -25,5 +25,5 @@ cmake "$SCRIPT_DIR" \
     -DCMAKE_BUILD_TYPE=Release
 cmake --build . -j"$(sysctl -n hw.ncpu)"
 
-cp liblcms2.a "$SCRIPT_DIR/liblcms2-ios-arm64.a"
-echo "Done: $SCRIPT_DIR/liblcms2-ios-arm64.a ($(du -h "$SCRIPT_DIR/liblcms2-ios-arm64.a" | cut -f1))"
+cp liblcms2.a "$SCRIPT_DIR/lcms2-ios-arm64.a"
+echo "Done: $SCRIPT_DIR/lcms2-ios-arm64.a ($(du -h "$SCRIPT_DIR/lcms2-ios-arm64.a" | cut -f1))"

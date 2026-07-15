@@ -5,7 +5,7 @@ set -euo pipefail
 # macOS 编译脚本（仅 macOS）
 # 编译本机架构（arm64 或 x86_64）
 # 如需 universal 产物，手动对两个架构产物执行 lipo
-# 产物: liblcms2-macos-{arch}.a
+# 产物: lcms2-macos-{arch}.a
 # ============================================================
 SCRIPT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 
@@ -28,5 +28,5 @@ cmake "$SCRIPT_DIR" \
     -DLCMS2_BUILD_TESTS=OFF
 cmake --build . -j"$(sysctl -n hw.ncpu)"
 
-cp liblcms2.a "$SCRIPT_DIR/liblcms2-macos-${ARCH}.a"
-echo "Done: $SCRIPT_DIR/liblcms2-macos-${ARCH}.a ($(du -h "$SCRIPT_DIR/liblcms2-macos-${ARCH}.a" | cut -f1))"
+cp liblcms2.a "$SCRIPT_DIR/lcms2-macos-${ARCH}.a"
+echo "Done: $SCRIPT_DIR/lcms2-macos-${ARCH}.a ($(du -h "$SCRIPT_DIR/lcms2-macos-${ARCH}.a" | cut -f1))"
